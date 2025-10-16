@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import TodoModal from "./TodoModal";
 
 function App() {
   const [todos, setTodos] = useState(() => {
@@ -64,8 +65,16 @@ function App() {
   }, [completedTodos]);
 
   const openModal = (quadrantKey) => {
-    setSelectedQuadrant(quadrantKey);
+    setSelectedQuadrant({
+      key: quadrantKey,
+      ...quadrants[quadrantKey],
+    });
     setShowModal(true);
+  };
+
+  //新增任務
+  const handleAddTodo = (newTodo) => {
+    setTodos([...todos, newTodo]);
   };
 
   const completeTodo = (id) => {
@@ -81,14 +90,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4">
-      {/* 主容器 - 根據原始比例 4500x2700 */}
+      {/* 主容器*/}
       <div className="max-w-7xl mx-auto">
         {/* 標題 */}
         <h1 className="text-4xl font-bold text-center mb-6 text-gray-800">
           ⚡ 寶可夢時間管理大師 ⚡
         </h1>
 
-        {/* 四象限容器 - 保持 4500:2700 的比例 */}
+        {/* 四象限容器 */}
         <div className="relative w-full" style={{ paddingBottom: "60%" }}>
           {/* 四象限 Grid */}
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-6">
@@ -181,8 +190,8 @@ function App() {
             "
             onClick={() => setShowArchive(!showArchive)}
             style={{
-              width: "12%", // 718/4500 ≈ 16%
-              paddingBottom: "12%", // 保持正方形
+              width: "12%", 
+              paddingBottom: "12%",
             }}
           >
             <img
@@ -206,27 +215,19 @@ function App() {
 
       {/* Modal（待完成）*/}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4">
-            <h2 className="text-3xl font-bold mb-6">
-              新增 {quadrants[selectedQuadrant]?.name} 任務
-            </h2>
-            <p className="text-gray-600 mb-4">表單功能開發中...</p>
-            <button
-              onClick={() => setShowModal(false)}
-              className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl hover:from-purple-600 hover:to-blue-600"
-            >
-              關閉
-            </button>
-          </div>
-        </div>
+        <TodoModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          quadrant={selectedQuadrant}
+          onSubmit={handleAddTodo}
+        />
       )}
 
       {/* Archive Modal（待完成）*/}
       {showArchive && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-3xl font-bold mb-6">⚾ 高級球 - 歷史紀錄</h2>
+            <h2 className="text-3xl font-bold mb-6">歷史紀錄</h2>
 
             {completedTodos.length === 0 ? (
               <p className="text-gray-500 text-center py-12 text-xl">
