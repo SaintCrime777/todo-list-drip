@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import TodoModal from "./TodoModal";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [todos, setTodos] = useState(() => {
@@ -15,6 +17,9 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [selectedQuadrant, setSelectedQuadrant] = useState(null);
   const [showArchive, setShowArchive] = useState(false);
+  const [editTodo, setEditTodo] = useState(null);
+  
+
 
   // 四象限定義
   const quadrants = {
@@ -25,7 +30,7 @@ function App() {
       position: "top-0 left-0",
       pokemon: "venusaur", // 妙蛙花
       iconPosition: "top-6 left-6",
-      todoPosition: "bottom-6 right-6",
+      todoPosition: "bottom-6 left-6",
     },
     "urgent-important": {
       name: "重要且緊急",
@@ -34,7 +39,7 @@ function App() {
       position: "top-0 right-0",
       pokemon: "charizard", // 噴火龍
       iconPosition: "top-6 right-6",
-      todoPosition: "bottom-6 left-6",
+      todoPosition: "bottom-6 right-6",
     },
     "notUrgent-notImportant": {
       name: "不緊急不重要",
@@ -65,6 +70,18 @@ function App() {
   }, [completedTodos]);
 
   const openModal = (quadrantKey) => {
+    // 檢查該象限的任務數量
+    const currentTodos = todos.filter((t) => t.quadrant === quadrantKey);
+
+    if (currentTodos.length >= 5) {
+      // 使用 toast 替換 alert
+      toast.error(`${quadrants[quadrantKey].name} 已達上限（5個任務）！`, {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      return;
+    }
+
     setSelectedQuadrant({
       key: quadrantKey,
       ...quadrants[quadrantKey],
@@ -72,10 +89,27 @@ function App() {
     setShowModal(true);
   };
 
-  //新增任務
-  const handleAddTodo = (newTodo) => {
-    setTodos([...todos, newTodo]);
+    // ✅ 新增：打開編輯 Modal
+  const openEditModal = (todo) => {
+    setEditTodo(todo);
+    setSelectedQuadrant({
+      key: todo.quadrant,
+      ...quadrants[todo.quadrant],
+    });
+    setShowModal(true);
   };
+
+  // ✅ 修改：處理新增和編輯
+const handleAddTodo = (todoData, isEdit) => {
+  if (isEdit) {
+    // 編輯模式：更新現有任務
+    setTodos(todos.map(t => t.id === todoData.id ? todoData : t));
+  } else {
+    // 新增模式：添加新任務
+    setTodos([...todos, todoData]);
+  }
+};
+
 
   const completeTodo = (id) => {
     const todo = todos.find((t) => t.id === id);
@@ -87,11 +121,26 @@ function App() {
       setTodos(todos.filter((t) => t.id !== id));
     }
   };
+  // ✅ 新增：關閉 Modal 時清空 editTodo
+  const closeModal = () => {
+  setShowModal(false);
+  setEditTodo(null);
+};
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4">
+    <div
+      className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 "
+      style={{
+        backgroundImage: "url('/bg-pokemon.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* 玻璃遮罩 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-blue-50/30 backdrop-blur-sm"></div>
       {/* 主容器*/}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* 標題 */}
         <h1 className="text-4xl font-bold text-center mb-6 text-gray-800">
           ⚡ 寶可夢時間管理大師 ⚡
@@ -104,29 +153,31 @@ function App() {
             {Object.entries(quadrants).map(([key, quadrant]) => (
               <div
                 key={key}
-                onClick={() => openModal(key)}
                 className={`
-                  ${quadrant.position}
-                  flex flex-col
-                  rounded-[50px]
-                  border-[2px]
-                  shadow-2xl
-                  p-8
-                  cursor-pointer
-                  hover:scale-105 
-                  transition-all 
-                  duration-300
-                  relative
-                  overflow-hidden
-                `}
+      ${quadrant.position}
+      flex flex-col
+      rounded-[50px]
+      border-[2px]
+      shadow-2xl
+      p-8
+      transition-all 
+      duration-300
+      relative
+      overflow-hidden
+    `}
                 style={{
                   backgroundColor: quadrant.bgColor,
                   borderColor: quadrant.borderColor,
                 }}
               >
                 {/* 寶可夢圖示（右上角）*/}
-                <div className={`absolute ${quadrant.iconPosition}`}>
-                  <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center text-5xl shadow-lg">
+                <div
+                  className={`absolute ${quadrant.iconPosition} cursor-pointer hover:scale-110 transition-all duration-300`}
+                >
+                  <div
+                    className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center text-5xl shadow-lg"
+                    onClick={() => openModal(key)}
+                  >
                     <img
                       src={`/${quadrant.pokemon}.png`}
                       alt={quadrant.name}
@@ -142,7 +193,7 @@ function App() {
                   </h3>
                 </div> */}
 
-                {/* Todo 數量（左上角）*/}
+                {/* Todo 數量*/}
                 <div className={`absolute ${quadrant.todoPosition}`}>
                   <div className="bg-white bg-opacity-70 rounded-full px-5 py-3 shadow-md">
                     <span className="font-bold text-gray-700 text-lg">
@@ -153,23 +204,20 @@ function App() {
 
                 {/* Todo 列表預覽 */}
                 <div className="flex-1 flex items-center justify-center p-12">
-                  <div className="space-y-3 w-full">
+                  <div className="space-y-2 w-80">
                     {todos
                       .filter((t) => t.quadrant === key)
-                      .slice(0, 3)
+                      .slice(0, 5)
                       .map((todo) => (
                         <div
                           key={todo.id}
-                          className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-medium text-gray-700 shadow-sm"
+                          onClick={() => openEditModal(todo)}
+                          className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-medium text-gray-700 shadow-sm 
+                          truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all"
                         >
                           {todo.title}
                         </div>
                       ))}
-                    {/* {todos.filter((t) => t.quadrant === key).length === 0 && (
-                      <p className="text-gray-500 text-center text-lg">
-                        點擊新增任務 ➕
-                      </p>
-                    )} */}
                   </div>
                 </div>
               </div>
@@ -190,7 +238,7 @@ function App() {
             "
             onClick={() => setShowArchive(!showArchive)}
             style={{
-              width: "12%", 
+              width: "12%",
               paddingBottom: "12%",
             }}
           >
@@ -213,13 +261,15 @@ function App() {
         </div>
       </div>
 
-      {/* Modal（待完成）*/}
+      {/* Modal*/}
       {showModal && (
         <TodoModal
           isOpen={showModal}
-          onClose={() => setShowModal(false)}
+          onClose={closeModal}
           quadrant={selectedQuadrant}
           onSubmit={handleAddTodo}
+          editTodo={editTodo} 
+          existingTodos={todos.filter(t => t.quadrant === selectedQuadrant?.key)}
         />
       )}
 
@@ -259,6 +309,20 @@ function App() {
           </div>
         </div>
       )}
+      {/* ToastContainer 放在這裡，整個 App 的最底部 */}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }

@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* React Toastify 進度條漸層 */
+.Toastify__progress-bar--error {
+  background: linear-gradient(to right, #ff6b6b, #ee5a6f, #c92a2a) !important;
+}
+
+.Toastify__progress-bar--success {
+  background: linear-gradient(to right, #51cf66, #37b24d, #2f9e44) !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(to right, #ffd93d, #ffb700, #f59f00) !important;
+}
+
+.Toastify__progress-bar--info {
+  background: linear-gradient(to right, #4dabf7, #339af0, #1c7ed6) !important;
+}
+
+/* 統一用彩虹漸層*/
+.Toastify__progress-bar {
+  background: linear-gradient(to right, #ff6b6b, #ffd93d, #51cf66, #4dabf7, #a78bfa) !important;
+}
