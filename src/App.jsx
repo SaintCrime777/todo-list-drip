@@ -171,8 +171,10 @@ function App() {
 
   //清空歷史紀錄
   const handleClearHistory = () => {
-    const toastId = 'clear-history-confirm';
-     if (toast.isActive(toastId)) {return;}//check
+    const toastId = "clear-history-confirm";
+    if (toast.isActive(toastId)) {
+      return;
+    } //check
     toast.warning(
       <div className="p-2 w-[280px]">
         <p className="font-bold mb-2">是否要清除所有紀錄？</p>
@@ -388,6 +390,13 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* 🆕 Footer - 版權聲明 */}
+      <footer className="relative z-10 text-center py-4 mt-8">
+        <p className="text-lg font-bold text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
+          本專案僅供學習和作品集展示使用，無任何商業、營利用途 / This project is intended solely for educational purposes and portfolio display, with no commercial or profit-making use.
+        </p>
+      </footer>
 
       {/* Modal*/}
       {showModal && (
