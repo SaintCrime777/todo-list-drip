@@ -97,7 +97,7 @@ function App() {
     setShowModal(true);
   };
 
-  // ✅ 修改：處理新增和編輯
+  // ✅ 處理新增和編輯
   const handleAddTodo = (todoData, isEdit) => {
     if (isEdit) {
       // 編輯模式：更新現有任務
@@ -107,7 +107,10 @@ function App() {
       setTodos([...todos, todoData]);
     }
   };
-
+  // 刪除任務
+  const handleDeleteTodo = (id) => {
+    setTodos(todos.filter((t) => t.id !== id));
+  };
   const completeTodo = (id) => {
     const todo = todos.find((t) => t.id === id);
     if (todo) {
@@ -123,7 +126,7 @@ function App() {
     toast.info(
       <div>
         <p className="font-bold mb-2">很好!訓練家你完成任務了嗎？</p>
-        <p className="text-sm text-gray-600 mb-4">{title}</p>
+        <p className="text-lg text-blue-600/100 mb-4">{title}</p>
         <div className="flex gap-2 justify-end">
           <button
             onClick={() => {
@@ -132,6 +135,7 @@ function App() {
               toast.success("任務已完成！", {
                 position: "top-center",
                 autoClose: 2500,
+                toastId: "task-completed",
                 icon: () => (
                   <img src="/pokeball.png" alt="完成" className="w-6 h-6" />
                 ),
@@ -155,6 +159,7 @@ function App() {
         closeButton: false,
         closeOnClick: false,
         icon: false,
+        toastId: `complete-confirm-${id}`,
       }
     );
   };
@@ -166,6 +171,8 @@ function App() {
 
   //清空歷史紀錄
   const handleClearHistory = () => {
+    const toastId = 'clear-history-confirm';
+     if (toast.isActive(toastId)) {return;}//check
     toast.warning(
       <div className="p-2 w-[280px]">
         <p className="font-bold mb-2">是否要清除所有紀錄？</p>
@@ -198,6 +205,7 @@ function App() {
         closeButton: false,
         closeOnClick: false,
         icon: false,
+        toastId: toastId,
       }
     );
   };
@@ -318,13 +326,13 @@ function App() {
                       .map((todo) => (
                         <div
                           key={todo.id}
-                          className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-medium text-gray-700 shadow-sm 
+                          className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-bold text-gray-700 shadow-sm 
                           truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all flex items-center justify-between gap-3"
                         >
                           {/* 任務標題 */}
                           <div
                             onClick={() => openEditModal(todo)}
-                            className="flex-1 text-base font-medium text-gray-700 truncate cursor-pointer"
+                            className="flex-1 text-base font-bold text-gray-700 truncate cursor-pointer"
                           >
                             {todo.title}
                           </div>
@@ -388,6 +396,7 @@ function App() {
           onClose={closeModal}
           quadrant={selectedQuadrant}
           onSubmit={handleAddTodo}
+          onDelete={handleDeleteTodo}
           editTodo={editTodo}
           existingTodos={todos.filter(
             (t) => t.quadrant === selectedQuadrant?.key
