@@ -137,7 +137,7 @@ function App() {
                 autoClose: 2500,
                 toastId: "task-completed",
                 icon: () => (
-                  <img src="/pokeball.png" alt="完成" className="w-6 h-6" />
+                  <img src="/pokeball.webp" alt="完成" className="w-6 h-6" />
                 ),
               });
             }}
@@ -217,48 +217,58 @@ function App() {
     <div
       className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 "
       style={{
-        backgroundImage: "url('/bg-pokemon.jpg')",
+        backgroundImage: "url('/bg-pokemon.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
       }}
     >
       {/* 玻璃遮罩 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-blue-50/30 backdrop-blur-sm"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-white/30 to-blue-50/30 backdrop-blur-xs"></div>
       {/* 主容器*/}
       <div className="max-w-7xl mx-auto relative z-10">
         {/* 標題 */}
         <h1 className="text-4xl font-bold text-center mb-10 mt-8 text-gray-800">
-          <span className="inline-block rotate-[15deg]">⚡</span>{" "}
-          寶可夢時間管理大師{" "}
-          <span className="inline-block rotate-[15deg]">⚡</span>
+          <span className="inline-flex items-center justify-center gap-4">
+            <img
+              src="/trophy.png"
+              alt="trophy"
+              className="w-8 h-8 rotate-[deg] hover:scale-110 transition-all"
+            />
+            <span>時間管理大師</span>
+            <img
+              src="/trophy.png"
+              alt="trophy"
+              className="w-8 h-8 rotate-[deg] hover:scale-110 transition-all"
+            />
+          </span>
         </h1>
         {/* 🆕 裝飾條 */}
         <div className="flex justify-center mb-8">
           <div className="flex gap-5">
             <img
-              src="/pickachu.png"
-              className="w-10 h-10 animate-bounce"
+              src="/pikachu.webp"
+              className="w-8 h-8 animate-bounce"
               style={{ animationDelay: "0ms" }}
             />
             <img
-              src="/pokeball.png"
-              className="w-10 h-10 animate-bounce"
+              src="/pokeball.webp"
+              className="w-8 h-8 animate-bounce"
               style={{ animationDelay: "300ms" }}
             />
             <img
-              src="/pickachu.png"
-              className="w-10 h-10 animate-bounce"
+              src="/pikachu.webp"
+              className="w-8 h-8 animate-bounce"
               style={{ animationDelay: "0ms" }}
             />
             <img
-              src="/pokeball.png"
-              className="w-10 h-10 animate-bounce"
+              src="/pokeball.webp"
+              className="w-8 h-8 animate-bounce"
               style={{ animationDelay: "300ms" }}
             />
             <img
-              src="/pickachu.png"
-              className="w-10 h-10 animate-bounce"
+              src="/pikachu.webp"
+              className="w-8 h-8 animate-bounce"
               style={{ animationDelay: "0ms" }}
             />
           </div>
@@ -375,8 +385,8 @@ function App() {
             "
             onClick={() => setShowArchive(!showArchive)}
             style={{
-              width: "12%",
-              paddingBottom: "12%",
+              width: "14%",
+              paddingBottom: "14%",
             }}
           >
             <img
@@ -394,7 +404,7 @@ function App() {
       {/* 🆕 Footer - 版權聲明 */}
       <footer className="relative z-10 text-center py-4 mt-8">
         <p className="text-lg font-bold text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
-          本專案僅供學習和作品集展示使用，無任何商業、營利用途 / This project is intended solely for educational purposes and portfolio display, with no commercial or profit-making use.
+          每天都進步些許，積沙成塔、聚少成多，一起往目標大步邁進!
         </p>
       </footer>
 
