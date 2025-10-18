@@ -147,7 +147,6 @@ function TodoModal({
 
 //===============================================================
 //===============================================================
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
       <div className="relative w-full max-w-2xl max-h-full p-4">
@@ -169,33 +168,25 @@ function TodoModal({
                 {editTodo ? "編輯" : "新增"} {quadrant.name} 任務
               </h3>
             </div>
-             {/* 🆕 右側按鈕組 */}
-  <div className="flex items-center gap-2">
-    {/* 刪除按鈕 - 只在編輯模式顯示 */}
-    {editTodo && (
-      <button
-        type="button"
-        onClick={handleDeleteTodo}
-        className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium flex items-center gap-1"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-        刪除
-      </button>
-    )}
-    
-    {/* 關閉按鈕 */}
-    <button
-      type="button"
-      onClick={onClose}
-      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition-all"
-    >
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition-all"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
 
           {/* Modal body */}
