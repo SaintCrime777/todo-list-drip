@@ -18,8 +18,6 @@ function App() {
   const [selectedQuadrant, setSelectedQuadrant] = useState(null);
   const [showArchive, setShowArchive] = useState(false);
   const [editTodo, setEditTodo] = useState(null);
-  
-
 
   // 四象限定義
   const quadrants = {
@@ -30,7 +28,7 @@ function App() {
       position: "top-0 left-0",
       pokemon: "venusaur", // 妙蛙花
       iconPosition: "top-6 left-6",
-      todoPosition: "bottom-6 left-6",
+      todoPosition: "bottom-6 right-6",
     },
     "urgent-important": {
       name: "重要且緊急",
@@ -39,7 +37,7 @@ function App() {
       position: "top-0 right-0",
       pokemon: "charizard", // 噴火龍
       iconPosition: "top-6 right-6",
-      todoPosition: "bottom-6 right-6",
+      todoPosition: "bottom-6 left-6",
     },
     "notUrgent-notImportant": {
       name: "不緊急不重要",
@@ -89,7 +87,7 @@ function App() {
     setShowModal(true);
   };
 
-    // ✅ 新增：打開編輯 Modal
+  // ✅ 新增：打開編輯 Modal
   const openEditModal = (todo) => {
     setEditTodo(todo);
     setSelectedQuadrant({
@@ -100,16 +98,15 @@ function App() {
   };
 
   // ✅ 修改：處理新增和編輯
-const handleAddTodo = (todoData, isEdit) => {
-  if (isEdit) {
-    // 編輯模式：更新現有任務
-    setTodos(todos.map(t => t.id === todoData.id ? todoData : t));
-  } else {
-    // 新增模式：添加新任務
-    setTodos([...todos, todoData]);
-  }
-};
-
+  const handleAddTodo = (todoData, isEdit) => {
+    if (isEdit) {
+      // 編輯模式：更新現有任務
+      setTodos(todos.map((t) => (t.id === todoData.id ? todoData : t)));
+    } else {
+      // 新增模式：添加新任務
+      setTodos([...todos, todoData]);
+    }
+  };
 
   const completeTodo = (id) => {
     const todo = todos.find((t) => t.id === id);
@@ -121,12 +118,91 @@ const handleAddTodo = (todoData, isEdit) => {
       setTodos(todos.filter((t) => t.id !== id));
     }
   };
+  // ✅ 新增這個函數
+  const handleCompleteTodo = (id, title) => {
+    toast.info(
+      <div>
+        <p className="font-bold mb-2">很好!訓練家你完成任務了嗎？</p>
+        <p className="text-sm text-gray-600 mb-4">{title}</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => {
+              completeTodo(id);
+              toast.dismiss();
+              toast.success("任務已完成！", {
+                position: "top-center",
+                autoClose: 2500,
+                icon: () => (
+                  <img src="/pokeball.png" alt="完成" className="w-6 h-6" />
+                ),
+              });
+            }}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 text-sm font-medium"
+          >
+            確認
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 text-sm font-medium"
+          >
+            取消
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeButton: false,
+        closeOnClick: false,
+        icon: false,
+      }
+    );
+  };
   // ✅ 新增：關閉 Modal 時清空 editTodo
   const closeModal = () => {
-  setShowModal(false);
-  setEditTodo(null);
-};
+    setShowModal(false);
+    setEditTodo(null);
+  };
 
+  //清空歷史紀錄
+  const handleClearHistory = () => {
+    toast.warning(
+      <div className="p-2 w-[280px]">
+        <p className="font-bold mb-2">是否要清除所有紀錄？</p>
+        <p className="text-sm text-gray-600 mb-4">刪除後無法復原！</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => {
+              setCompletedTodos([]);
+              toast.dismiss();
+              toast.success("歷史紀錄已清空", {
+                position: "top-center",
+                autoClose: 2000,
+              });
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium"
+          >
+            確認清空
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 text-sm font-medium"
+          >
+            取消
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeButton: false,
+        closeOnClick: false,
+        icon: false,
+      }
+    );
+  };
+  // =====================================================================
+  // =====================================================================
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 "
@@ -142,10 +218,41 @@ const handleAddTodo = (todoData, isEdit) => {
       {/* 主容器*/}
       <div className="max-w-7xl mx-auto relative z-10">
         {/* 標題 */}
-        <h1 className="text-4xl font-bold text-center mb-6 text-gray-800">
-          ⚡ 寶可夢時間管理大師 ⚡
+        <h1 className="text-4xl font-bold text-center mb-10 mt-8 text-gray-800">
+          <span className="inline-block rotate-[15deg]">⚡</span>{" "}
+          寶可夢時間管理大師{" "}
+          <span className="inline-block rotate-[15deg]">⚡</span>
         </h1>
-
+        {/* 🆕 裝飾條 */}
+        <div className="flex justify-center mb-8">
+          <div className="flex gap-5">
+            <img
+              src="/pickachu.png"
+              className="w-10 h-10 animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            />
+            <img
+              src="/pokeball.png"
+              className="w-10 h-10 animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            />
+            <img
+              src="/pickachu.png"
+              className="w-10 h-10 animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            />
+            <img
+              src="/pokeball.png"
+              className="w-10 h-10 animate-bounce"
+              style={{ animationDelay: "300ms" }}
+            />
+            <img
+              src="/pickachu.png"
+              className="w-10 h-10 animate-bounce"
+              style={{ animationDelay: "0ms" }}
+            />
+          </div>
+        </div>
         {/* 四象限容器 */}
         <div className="relative w-full" style={{ paddingBottom: "60%" }}>
           {/* 四象限 Grid */}
@@ -154,23 +261,23 @@ const handleAddTodo = (todoData, isEdit) => {
               <div
                 key={key}
                 className={`
-      ${quadrant.position}
-      flex flex-col
-      rounded-[50px]
-      border-[2px]
-      shadow-2xl
-      p-8
-      transition-all 
-      duration-300
-      relative
-      overflow-hidden
-    `}
+                ${quadrant.position}
+                flex flex-col
+                rounded-[50px]
+                border-[2px]
+                shadow-2xl
+                p-8
+                transition-all 
+                duration-300
+                relative
+                overflow-hidden
+                `}
                 style={{
                   backgroundColor: quadrant.bgColor,
                   borderColor: quadrant.borderColor,
                 }}
               >
-                {/* 寶可夢圖示（右上角）*/}
+                {/* 寶可夢圖示*/}
                 <div
                   className={`absolute ${quadrant.iconPosition} cursor-pointer hover:scale-110 transition-all duration-300`}
                 >
@@ -203,7 +310,7 @@ const handleAddTodo = (todoData, isEdit) => {
                 </div>
 
                 {/* Todo 列表預覽 */}
-                <div className="flex-1 flex items-center justify-center p-12">
+                <div className="flex-1 flex items-center justify-center pt-3 pb-10">
                   <div className="space-y-2 w-80">
                     {todos
                       .filter((t) => t.quadrant === key)
@@ -211,11 +318,31 @@ const handleAddTodo = (todoData, isEdit) => {
                       .map((todo) => (
                         <div
                           key={todo.id}
-                          onClick={() => openEditModal(todo)}
                           className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-medium text-gray-700 shadow-sm 
-                          truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all"
+                          truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all flex items-center justify-between gap-3"
                         >
-                          {todo.title}
+                          {/* 任務標題 */}
+                          <div
+                            onClick={() => openEditModal(todo)}
+                            className="flex-1 text-base font-medium text-gray-700 truncate cursor-pointer"
+                          >
+                            {todo.title}
+                          </div>
+
+                          {/* 完成按鈕 */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // 防止觸發編輯
+                              handleCompleteTodo(todo.id, todo.title);
+                            }}
+                            className="flex-shrink-0 w-8 h-8 hover:scale-110 transition-transform"
+                          >
+                            <img
+                              src="/complete-icon.png"
+                              alt="完成"
+                              className="w-full h-full object-contain"
+                            />
+                          </button>
                         </div>
                       ))}
                   </div>
@@ -251,13 +378,6 @@ const handleAddTodo = (todoData, isEdit) => {
               }}
             />
           </div>
-
-          {/* Hover 提示 */}
-          <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">
-              點擊查看歷史紀錄
-            </div>
-          </div>
         </div>
       </div>
 
@@ -268,8 +388,10 @@ const handleAddTodo = (todoData, isEdit) => {
           onClose={closeModal}
           quadrant={selectedQuadrant}
           onSubmit={handleAddTodo}
-          editTodo={editTodo} 
-          existingTodos={todos.filter(t => t.quadrant === selectedQuadrant?.key)}
+          editTodo={editTodo}
+          existingTodos={todos.filter(
+            (t) => t.quadrant === selectedQuadrant?.key
+          )}
         />
       )}
 
@@ -277,7 +399,20 @@ const handleAddTodo = (todoData, isEdit) => {
       {showArchive && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-3xl font-bold mb-6">歷史紀錄</h2>
+            {/* 標題列 */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold">歷史紀錄</h2>
+
+              {/* 🆕 右上角清除按鈕 */}
+              {completedTodos.length > 0 && (
+                <button
+                  onClick={handleClearHistory}
+                  className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors text-sm font-medium"
+                >
+                  🗑️ 清空紀錄
+                </button>
+              )}
+            </div>
 
             {completedTodos.length === 0 ? (
               <p className="text-gray-500 text-center py-12 text-xl">
@@ -288,13 +423,24 @@ const handleAddTodo = (todoData, isEdit) => {
                 {completedTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className="bg-gray-50 rounded-xl p-6 border-l-4 border-green-500"
+                    className="bg-gray-50 rounded-xl p-6 border-l-4 border-green-500 flex"
                   >
-                    <h3 className="font-bold text-xl mb-2">{todo.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      完成日期:{" "}
-                      {new Date(todo.completedDate).toLocaleDateString()}
-                    </p>
+                    {/* 🆕 寶可夢圖示 */}
+                    <div className="flex-shrink-0">
+                      <img
+                        src={`/${quadrants[todo.quadrant].pokemon}.png`}
+                        alt={quadrants[todo.quadrant].name}
+                        className="w-12 h-12 object-contain"
+                      />
+                    </div>
+                    {/* 任務資訊 */}
+                    <div className="flex-1 pl-4">
+                      <h3 className="font-bold text-xl mb-2">{todo.title}</h3>
+                      <p className="text-sm text-gray-600">
+                        完成日期:{" "}
+                        {new Date(todo.completedDate).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -309,6 +455,7 @@ const handleAddTodo = (todoData, isEdit) => {
           </div>
         </div>
       )}
+
       {/* ToastContainer 放在這裡，整個 App 的最底部 */}
       <ToastContainer
         position="top-center"

@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 
-function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, existingTodos = []}) {
+function TodoModal({
+  isOpen,
+  onClose,
+  quadrant,
+  onSubmit,
+  editTodo = null,
+  existingTodos = [],
+}) {
+  // 今天的日期字串
+  const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     title: "",
     startDate: "",
@@ -59,11 +69,11 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
     } else {
       // ✅ 檢查是否有重複名稱
       const duplicateTodo = existingTodos.find(
-        todo => 
-          todo.title.trim().toLowerCase() === formData.title.trim().toLowerCase() &&
-          todo.id !== editTodo?.id  // 編輯模式時排除自己
+        (todo) =>
+          todo.title.trim().toLowerCase() ===
+            formData.title.trim().toLowerCase() && todo.id !== editTodo?.id // 編輯模式時排除自己
       );
-      
+
       if (duplicateTodo) {
         newErrors.title = "此象限已有相同名稱的任務";
       }
@@ -135,6 +145,9 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
 
   if (!isOpen) return null;
 
+//===============================================================
+//===============================================================
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50">
       <div className="relative w-full max-w-2xl max-h-full p-4">
@@ -153,18 +166,36 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                 className="w-12 h-12 object-contain"
               />
               <h3 className="text-2xl font-bold text-gray-900">
-                {editTodo ? '編輯' : '新增'} {quadrant.name} 任務
+                {editTodo ? "編輯" : "新增"} {quadrant.name} 任務
               </h3>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+             {/* 🆕 右側按鈕組 */}
+  <div className="flex items-center gap-2">
+    {/* 刪除按鈕 - 只在編輯模式顯示 */}
+    {editTodo && (
+      <button
+        type="button"
+        onClick={handleDeleteTodo}
+        className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium flex items-center gap-1"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        刪除
+      </button>
+    )}
+    
+    {/* 關閉按鈕 */}
+    <button
+      type="button"
+      onClick={onClose}
+      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center transition-all"
+    >
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
           </div>
 
           {/* Modal body */}
@@ -172,7 +203,10 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
             <div className="grid gap-6 mb-6 grid-cols-2">
               {/* 事項名稱 */}
               <div className="col-span-2">
-                <label htmlFor="title" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   事項名稱 <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -186,7 +220,7 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                     className={`bg-white border ${
                       errors.title ? "border-red-500" : "border-gray-300"
                     } text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3 transition-all`}
-                    placeholder="例如：準備技術面試"
+                    placeholder="例如：運動30分鐘"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
                     {formData.title.length}/30
@@ -199,12 +233,16 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
 
               {/* 開始日期 */}
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="startDate" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="startDate"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   開始日期 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
                   name="startDate"
+                  min={today}
                   id="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
@@ -213,18 +251,24 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                   } text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3`}
                 />
                 {errors.startDate && (
-                  <p className="mt-1 text-sm text-red-500">{errors.startDate}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.startDate}
+                  </p>
                 )}
               </div>
 
               {/* 結束日期 */}
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="endDate" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="endDate"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   結束日期 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
                   name="endDate"
+                  min={today}
                   id="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
@@ -239,7 +283,10 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
 
               {/* 預計時數 */}
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="estimatedHours" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="estimatedHours"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   預計時數 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -253,16 +300,21 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                   className={`bg-white border ${
                     errors.estimatedHours ? "border-red-500" : "border-gray-300"
                   } text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3`}
-                  placeholder="10"
+                  placeholder=""
                 />
                 {errors.estimatedHours && (
-                  <p className="mt-1 text-sm text-red-500">{errors.estimatedHours}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.estimatedHours}
+                  </p>
                 )}
               </div>
 
               {/* 難易度 */}
               <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="difficulty" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="difficulty"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   難易度
                 </label>
                 <select
@@ -272,15 +324,18 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                   onChange={handleChange}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3"
                 >
-                  <option value="easy">😊 簡單</option>
-                  <option value="medium">😐 中等</option>
-                  <option value="hard">😰 困難</option>
+                  <option value="easy">簡單</option>
+                  <option value="medium">中等</option>
+                  <option value="hard">困難</option>
                 </select>
               </div>
 
               {/* DRIP */}
               <div className="col-span-2">
-                <label htmlFor="drip" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="drip"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   DRIP 性質
                 </label>
                 <select
@@ -290,22 +345,29 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                   onChange={handleChange}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3"
                 >
-                  <option value="do">✅ Do - 立即執行</option>
-                  <option value="reduce">⬇️ Reduce - 減少投入</option>
-                  <option value="ignore">🚫 Ignore - 可以忽略</option>
-                  <option value="plan">📅 Plan - 需要規劃</option>
+                  <option value="delegation">🧾 Delegation - 委託庶務</option>
+                  <option value="replacement">🔄 Replacement - 替補任務</option>
+                  <option value="investment">🌱 Investment - 投資自己</option>
+                  <option value="production">🚀 Production - 向上生產</option>
                 </select>
                 <p className="mt-2 text-sm text-gray-600">
-                  {formData.drip === "do" && "這是必須立即處理的重要任務"}
-                  {formData.drip === "reduce" && "可以減少投入的時間和精力"}
-                  {formData.drip === "ignore" && "不重要的事項，可以忽略"}
-                  {formData.drip === "plan" && "需要仔細規劃的未來任務"}
+                  {formData.drip === "delegation" &&
+                    "勇敢交給他人處理，釋放你的時間與精力。"}
+                  {formData.drip === "replacement" &&
+                    "需將專業但可被他人承接的工作交出去，避免成為瓶頸。"}
+                  {formData.drip === "investment" &&
+                    "安排時間充電、學習與培養關係，為長期成長注入能量。"}
+                  {formData.drip === "production" &&
+                    "重心在創造收益又能讓你充滿動力的核心工作上，形成正向循環。"}
                 </p>
               </div>
 
               {/* 任務備註 */}
               <div className="col-span-2">
-                <label htmlFor="description" className="block mb-2 text-sm font-bold text-gray-900">
+                <label
+                  htmlFor="description"
+                  className="block mb-2 text-sm font-bold text-gray-900"
+                >
                   任務備註
                 </label>
                 <textarea
@@ -316,11 +378,16 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                   rows={4}
                   maxLength={200}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 block w-full p-3 transition-all resize-none"
-                  placeholder="請描述任務的詳細內容"
                 />
                 <div className="flex justify-between items-center mt-1">
                   <span className="text-xs text-gray-400">選填</span>
-                  <span className={`text-xs ${formData.description?.length >= 200 ? "text-red-500" : "text-gray-400"}`}>
+                  <span
+                    className={`text-xs ${
+                      formData.description?.length >= 200
+                        ? "text-red-500"
+                        : "text-gray-400"
+                    }`}
+                  >
                     {formData.description?.length || 0}/200
                   </span>
                 </div>
@@ -340,14 +407,18 @@ function TodoModal({ isOpen, onClose, quadrant, onSubmit, editTodo = null, exist
                 type="submit"
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all shadow-lg inline-flex items-center justify-center gap-2"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fillRule="evenodd"
                     d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                     clipRule="evenodd"
                   />
                 </svg>
-                {editTodo ? '更新任務' : '新增任務'}
+                {editTodo ? "更新任務" : "新增任務"}
               </button>
             </div>
           </form>
