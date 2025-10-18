@@ -121,10 +121,10 @@ function App() {
       setTodos(todos.filter((t) => t.id !== id));
     }
   };
-  // ✅ 新增這個函數
+  // ✅ 確認完成toast
   const handleCompleteTodo = (id, title) => {
     toast.info(
-      <div>
+      <div className="w-full sm:w-auto">
         <p className="font-bold mb-2">很好!訓練家你完成任務了嗎？</p>
         <p className="text-lg text-blue-600/100 mb-4">{title}</p>
         <div className="flex gap-2 justify-end">
@@ -233,13 +233,13 @@ function App() {
             <img
               src="/trophy.png"
               alt="trophy"
-              className="w-8 h-8 rotate-[deg] hover:scale-110 transition-all"
+              className="w-8 h-8 hover:scale-110 transition-all"
             />
             <span>時間管理大師</span>
             <img
               src="/trophy.png"
               alt="trophy"
-              className="w-8 h-8 rotate-[deg] hover:scale-110 transition-all"
+              className="w-8 h-8 hover:scale-110 transition-all"
             />
           </span>
         </h1>
@@ -274,35 +274,23 @@ function App() {
           </div>
         </div>
         {/* 四象限容器 */}
-        <div className="relative w-full" style={{ paddingBottom: "60%" }}>
-          {/* 四象限 Grid */}
-          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-6">
+        <div className="w-full mb-8">
+          {/* 📱 手機版：垂直排列 */}
+          <div className="sm:hidden space-y-4 px-4">
             {Object.entries(quadrants).map(([key, quadrant]) => (
               <div
                 key={key}
-                className={`
-                ${quadrant.position}
-                flex flex-col
-                rounded-[50px]
-                border-[2px]
-                shadow-2xl
-                p-8
-                transition-all 
-                duration-300
-                relative
-                overflow-hidden
-                `}
+                className="rounded-[50px] border-[2px] shadow-2xl p-6 relative"
                 style={{
                   backgroundColor: quadrant.bgColor,
                   borderColor: quadrant.borderColor,
+                  minHeight: "180px",
                 }}
               >
-                {/* 寶可夢圖示*/}
-                <div
-                  className={`absolute ${quadrant.iconPosition} cursor-pointer hover:scale-110 transition-all duration-300`}
-                >
+                {/* 動物圖示 */}
+                <div className="absolute top-5 left-5 cursor-pointer hover:scale-110 transition-all duration-300">
                   <div
-                    className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center text-5xl shadow-lg"
+                    className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center shadow-lg"
                     onClick={() => openModal(key)}
                   >
                     <img
@@ -313,88 +301,178 @@ function App() {
                   </div>
                 </div>
 
-                {/* 區塊標題（左下角）
-                <div className="absolute bottom-8 left-8">
-                  <h3 className="text-3xl font-bold text-gray-800">
-                    {quadrant.name}
-                  </h3>
-                </div> */}
-
-                {/* Todo 數量*/}
-                <div className={`absolute ${quadrant.todoPosition}`}>
-                  <div className="bg-white bg-opacity-70 rounded-full px-5 py-3 shadow-md">
-                    <span className="font-bold text-gray-700 text-lg">
+                {/* 任務數量 */}
+                <div className="absolute top-5 right-5">
+                  <div className="bg-white bg-opacity-70 rounded-full px-3 py-1.5 shadow-md">
+                    <span className="font-bold text-gray-700 text-sm">
                       {todos.filter((t) => t.quadrant === key).length} 項任務
                     </span>
                   </div>
                 </div>
 
-                {/* Todo 列表預覽 */}
-                <div className="flex-1 flex items-center justify-center pt-3 pb-10">
-                  <div className="space-y-2 w-80">
-                    {todos
-                      .filter((t) => t.quadrant === key)
-                      .slice(0, 5)
-                      .map((todo) => (
+                {/* 任務列表 */}
+                <div className="mt-20 space-y-2">
+                  {todos
+                    .filter((t) => t.quadrant === key)
+                    .slice(0, 5)
+                    .map((todo) => (
+                      <div
+                        key={todo.id}
+                        className="bg-white bg-opacity-70 rounded-xl p-2.5 flex items-center justify-between gap-2 shadow-sm hover:bg-opacity-90 hover:shadow-md transition-all"
+                      >
                         <div
-                          key={todo.id}
-                          className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-bold text-gray-700 shadow-sm 
-                          truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all flex items-center justify-between gap-3"
+                          onClick={() => openEditModal(todo)}
+                          className="flex-1 text-sm font-bold text-gray-700 truncate cursor-pointer"
                         >
-                          {/* 任務標題 */}
-                          <div
-                            onClick={() => openEditModal(todo)}
-                            className="flex-1 text-base font-bold text-gray-700 truncate cursor-pointer"
-                          >
-                            {todo.title}
-                          </div>
-
-                          {/* 完成按鈕 */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation(); // 防止觸發編輯
-                              handleCompleteTodo(todo.id, todo.title);
-                            }}
-                            className="flex-shrink-0 w-8 h-8 hover:scale-110 transition-transform"
-                          >
-                            <img
-                              src="/complete-icon.png"
-                              alt="完成"
-                              className="w-full h-full object-contain"
-                            />
-                          </button>
+                          {todo.title}
                         </div>
-                      ))}
-                  </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCompleteTodo(todo.id, todo.title);
+                          }}
+                          className="flex-shrink-0 w-7 h-7 hover:scale-110 transition-transform"
+                        >
+                          <img
+                            src="/complete-icon.png"
+                            alt="完成"
+                            className="w-full h-full object-contain"
+                          />
+                        </button>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* 中間高級球 - 根據原始尺寸 718x718 */}
+          {/* 💻 桌面版：保持原樣的 2x2 網格 */}
           <div
-            className="
-              absolute 
-              top-1/2 left-1/2 
-              transform -translate-x-1/2 -translate-y-1/2
-              cursor-pointer
-              hover:scale-110 
-              transition-all 
-              duration-300
-              z-20
-            "
+            className="hidden sm:block relative w-full"
+            style={{ paddingBottom: "60%" }}
+          >
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-6">
+              {Object.entries(quadrants).map(([key, quadrant]) => (
+                <div
+                  key={key}
+                  className={`
+            ${quadrant.position}
+            flex flex-col
+            rounded-[50px]
+            border-[2px]
+            shadow-2xl
+            p-8
+            transition-all 
+            duration-300
+            relative
+            overflow-hidden
+          `}
+                  style={{
+                    backgroundColor: quadrant.bgColor,
+                    borderColor: quadrant.borderColor,
+                  }}
+                >
+                  {/* 寶可夢圖示*/}
+                  <div
+                    className={`absolute ${quadrant.iconPosition} cursor-pointer hover:scale-110 transition-all duration-300`}
+                  >
+                    <div
+                      className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl flex items-center justify-center text-5xl shadow-lg"
+                      onClick={() => openModal(key)}
+                    >
+                      <img
+                        src={`/${quadrant.pokemon}.png`}
+                        alt={quadrant.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Todo 數量*/}
+                  <div className={`absolute ${quadrant.todoPosition}`}>
+                    <div className="bg-white bg-opacity-70 rounded-full px-5 py-3 shadow-md">
+                      <span className="font-bold text-gray-700 text-lg">
+                        {todos.filter((t) => t.quadrant === key).length} 項任務
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Todo 列表預覽 */}
+                  <div className="flex-1 flex items-center justify-center pt-3 pb-10">
+                    <div className="space-y-2 w-80">
+                      {todos
+                        .filter((t) => t.quadrant === key)
+                        .slice(0, 5)
+                        .map((todo) => (
+                          <div
+                            key={todo.id}
+                            className="bg-white bg-opacity-70 rounded-xl p-3 text-base font-bold text-gray-700 shadow-sm 
+                    truncate cursor-pointer hover:bg-opacity-90 hover:shadow-md transition-all flex items-center justify-between gap-3"
+                          >
+                            {/* 任務標題 */}
+                            <div
+                              onClick={() => openEditModal(todo)}
+                              className="flex-1 text-base font-bold text-gray-700 truncate cursor-pointer"
+                            >
+                              {todo.title}
+                            </div>
+
+                            {/* 完成按鈕 */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCompleteTodo(todo.id, todo.title);
+                              }}
+                              className="flex-shrink-0 w-8 h-8 hover:scale-110 transition-transform"
+                            >
+                              <img
+                                src="/complete-icon.png"
+                                alt="完成"
+                                className="w-full h-full object-contain"
+                              />
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 💻 桌面版中間的金魚球 */}
+            <div
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-all duration-300 z-20"
+              onClick={() => setShowArchive(!showArchive)}
+              style={{
+                width: "14%",
+                paddingBottom: "14%",
+              }}
+            >
+              <img
+                src="/ULTRA_BALL.webp"
+                alt="高級球"
+                className="absolute inset-0 w-full h-full object-contain rounded-full shadow-2xl"
+                style={{
+                  filter: "drop-shadow(0 44px 4px rgba(0, 0, 0, 0.25))",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        {/* 結束四象限容器 */}
+
+        {/* 📱 手機版：金魚球在 Footer 上方 */}
+        <div className="sm:hidden flex justify-center my-6">
+          <div
+            className="w-20 h-20 cursor-pointer hover:scale-110 transition-all duration-300"
             onClick={() => setShowArchive(!showArchive)}
-            style={{
-              width: "14%",
-              paddingBottom: "14%",
-            }}
           >
             <img
               src="/ULTRA_BALL.webp"
-              alt="高級球"
-              className="absolute inset-0 w-full h-full object-contain rounded-full shadow-2xl"
+              alt="歷史紀錄"
+              className="w-full h-full object-contain rounded-full shadow-2xl"
               style={{
-                filter: "drop-shadow(0 44px 4px rgba(0, 0, 0, 0.25))",
+                filter: "drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25))",
               }}
             />
           </div>
@@ -404,7 +482,7 @@ function App() {
       {/* 🆕 Footer - 版權聲明 */}
       <footer className="relative z-10 text-center py-4 mt-8">
         <p className="text-lg font-bold text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
-          每天都進步些許，積沙成塔、聚少成多，一起往目標大步邁進!
+          每天都進步些許，積沙成塔、聚少成多，<br className="sm:hidden" />一起往目標大步邁進!
         </p>
       </footer>
 
