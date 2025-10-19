@@ -294,7 +294,6 @@ function TodoModal({
                 <input
                   type="date"
                   name="startDate"
-                  min={today}
                   id="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
@@ -320,7 +319,7 @@ function TodoModal({
                 <input
                   type="date"
                   name="endDate"
-                  min={formData.startDate || today}
+                  min={formData.startDate}
                   id="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
