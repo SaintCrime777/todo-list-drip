@@ -90,7 +90,7 @@ function TodoModal({
     }
 
     if (formData.startDate && formData.endDate) {
-      if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      if (formData.endDate < formData.startDate) {
         newErrors.endDate = "結束日期不能早於開始日期";
       }
     }
