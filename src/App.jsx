@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import TodoModal from "./TodoModal";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HelpModal from "./HelpModal";
 
 function App() {
+  const [showHelp, setShowHelp] = useState(false);
   const [todos, setTodos] = useState(() => {
     const savedTodos = localStorage.getItem("pokemonTodos");
     return savedTodos ? JSON.parse(savedTodos) : [];
@@ -125,7 +127,7 @@ function App() {
   const handleCompleteTodo = (id, title) => {
     toast.info(
       <div className="w-full sm:w-auto">
-        <p className="font-bold mb-2">很好!訓練家你完成任務了嗎？</p>
+        <p className="font-bold mb-2">很好!你已經完成任務了嗎？</p>
         <p className="text-lg text-blue-600/100 mb-4">{title}</p>
         <div className="flex gap-2 justify-end">
           <button
@@ -227,8 +229,9 @@ function App() {
       <div className="fixed inset-0 bg-gradient-to-br from-white/30 to-blue-50/30 backdrop-blur-xs"></div>
       {/* 主容器*/}
       <div className="max-w-7xl mx-auto relative z-10">
+        <div className="relative mb-10 mt-8 px-12">
         {/* 標題 */}
-        <h1 className="text-4xl font-bold text-center mb-10 mt-8 text-gray-800">
+        <h1 className="text-4xl font-bold text-center text-gray-800">
           <span className="inline-flex items-center justify-center gap-4">
             <img
               src="/trophy.png"
@@ -243,6 +246,24 @@ function App() {
             />
           </span>
         </h1>
+
+        {/* 操作說明按鈕 */}
+        <button
+          onClick={() => setShowHelp(true)}
+          className="absolute top-0 right-2 sm:right-4 
+                   w-9 h-9 sm:w-10 sm:h-10 rounded-full 
+                   bg-white/80 backdrop-blur-sm shadow-lg
+                   hover:bg-white hover:scale-110
+                   flex items-center justify-center transition-all
+                   border-2 border-purple-300"
+        >
+          <span className="text-purple-600 font-bold text-xl">?</span>
+        </button>
+        </div>
+
+        {/* Help Modal */}
+        <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
+
         {/* 🆕 裝飾條 */}
         <div className="flex justify-center mb-8">
           <div className="flex gap-5">
@@ -482,7 +503,9 @@ function App() {
       {/* 🆕 Footer - 版權聲明 */}
       <footer className="relative z-10 text-center py-4 mt-8">
         <p className="text-lg font-bold text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
-          每天都進步些許，積沙成塔、聚少成多，<br className="sm:hidden" />一起往目標大步邁進!
+          每天都進步些許，積沙成塔、聚少成多，
+          <br className="sm:hidden" />
+          一起往目標大步邁進!
         </p>
       </footer>
 
