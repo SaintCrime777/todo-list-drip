@@ -471,7 +471,7 @@ function App() {
             >
               <img
                 src="/ULTRA_BALL.webp"
-                alt="高級球"
+                alt="金魚球"
                 className="absolute inset-0 w-full h-full object-contain rounded-full shadow-2xl"
                 style={{
                   filter: "drop-shadow(0 44px 4px rgba(0, 0, 0, 0.25))",
@@ -500,7 +500,7 @@ function App() {
         </div>
       </div>
 
-      {/* 🆕 Footer - 版權聲明 */}
+      {/* Footer */}
       <footer className="relative z-10 text-center py-4 mt-8">
         <p className="text-lg font-bold text-gray-600 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
           每天都進步些許，積沙成塔、聚少成多，
@@ -524,7 +524,7 @@ function App() {
         />
       )}
 
-      {/* Archive Modal（待完成）*/}
+      {/* Archive Modal */}
       {showArchive && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-3xl p-8 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
@@ -554,7 +554,7 @@ function App() {
                     key={todo.id}
                     className="bg-gray-50 rounded-xl p-6 border-l-4 border-green-500 flex"
                   >
-                    {/* 🆕 寶可夢圖示 */}
+                    {/* 🆕 圖示 */}
                     <div className="flex-shrink-0">
                       <img
                         src={`/${quadrants[todo.quadrant].pokemon}.png`}

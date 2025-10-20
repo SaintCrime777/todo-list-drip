@@ -4,7 +4,7 @@ function HelpModal({ isOpen, onClose }) {
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-      onClick={onClose} // 點擊背景關閉
+      onClick={onClose}
     >
       <div 
         className="relative max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
@@ -24,7 +24,7 @@ function HelpModal({ isOpen, onClose }) {
 
         {/* 說明圖片 */}
         <img 
-          src="/help-guide.png"  // 你的說明圖片路徑
+          src="/help-guide.png" 
           alt="操作說明"
           className="w-full h-auto"
         />
